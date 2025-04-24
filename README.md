@@ -25,13 +25,22 @@ cd landing-agent
 npm install
 ```
 
-3. **Start the development server**
+3. **Set up environment variables (optional)**
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+# Server Configuration
+PORT=4000
+```
+
+4. **Start the development server**
 
 ```bash
 npm run dev
 ```
 
-This will start the development server at [http://localhost:4321](http://localhost:4321).
+This will start the development server at [http://localhost:4321](http://localhost:4321) (or the port specified in your .env file).
 
 ### Building for Production
 
@@ -47,7 +56,7 @@ npm run build
 npm run preview
 ```
 
-or 
+or
 
 ```bash
 node dist/server/entry.mjs
@@ -69,7 +78,7 @@ docker build -t airia-landing-agent .
 docker run -p 4000:4000 -e PORT=4000 airia-landing-agent
 ```
 
-The application will be available at [http://localhost:3000](http://localhost:3000).
+The application will be available at [http://localhost:4000](http://localhost:4000).
 
 ### Using Docker Compose
 
@@ -81,9 +90,9 @@ services:
   web:
     build: .
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
-      - PORT=3000
+      - PORT=4000
 ```
 
 2. **Start the services**

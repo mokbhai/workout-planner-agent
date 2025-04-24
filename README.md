@@ -1,48 +1,116 @@
-# Astro Starter Kit: Basics
+# Airia Landing Agent
 
-```sh
-npm create astro@latest -- --template basics
+This is the landing page for Airia Technologies Private Limited, built with Astro.js and React.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm (v8 or higher)
+- Docker (optional, for containerized deployment)
+
+### Local Development
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/your-username/landing-agent.git
+cd landing-agent
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+2. **Install dependencies**
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm install
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+3. **Start the development server**
 
-## 🧞 Commands
+```bash
+npm run dev
+```
 
-All commands are run from the root of the project, from a terminal:
+This will start the development server at [http://localhost:4321](http://localhost:4321).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Building for Production
 
-## 👀 Want to learn more?
+1. **Build the project**
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+npm run build
+```
+
+2. **Preview the production build**
+
+```bash
+npm run preview
+```
+
+or 
+
+```bash
+node dist/server/entry.mjs
+```
+
+## 🐳 Docker Deployment
+
+### Using Docker
+
+1. **Build the Docker image**
+
+```bash
+docker build -t airia-landing-agent .
+```
+
+2. **Run the container**
+
+```bash
+docker run -p 4000:4000 -e PORT=4000 airia-landing-agent
+```
+
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+### Using Docker Compose
+
+1. **Create a docker-compose.yml file**
+
+```yaml
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+```
+
+2. **Start the services**
+
+```bash
+docker-compose up
+```
+
+## 📁 Project Structure
+
+- `src/` - Source code
+  - `components/` - React components
+  - `layouts/` - Layout components
+  - `pages/` - Astro pages
+- `public/` - Static assets
+- `dist/` - Build output (generated)
+
+## 🛠️ Technologies Used
+
+- [Astro](https://astro.build/) - Web Framework
+- [React](https://reactjs.org/) - UI Library
+- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
+
+## 📝 License
+
+This project is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
+
+## 📞 Contact
+
+For any questions or support, please contact us at [privacy@airia.in](mailto:privacy@airia.in).

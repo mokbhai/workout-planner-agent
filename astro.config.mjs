@@ -19,6 +19,7 @@ export default defineConfig({
   }),
 
   server: ({ command }) => ({
+    host: "0.0.0.0",
     port: command === "dev" ? 4321 : PORT,
   }),
 

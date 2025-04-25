@@ -12,7 +12,7 @@ const Partners: React.FC = () => {
         <div className="partners-grid">
           <div className="partner-card">
             <img
-              src="/src/assets/api_logo_cptblWith_strava_stack_orange.png"
+              src="/images/api_logo_cptblWith_strava_stack_orange.png"
               alt="Compatible with Strava"
               className="partner-logo"
             />

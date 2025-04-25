@@ -201,7 +201,7 @@ const SignUp: React.FC = () => {
             className="w-full flex items-center justify-center border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <img
-              src="/src/assets/btn_strava_connect_with_white.svg"
+              src="/images/btn_strava_connect_with_white.svg"
               alt="Strava"
             />
           </button>

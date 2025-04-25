@@ -14,6 +14,7 @@ const PORT = parseInt(process.env.PORT || "4000", 10);
 // https://astro.build/config
 export default defineConfig({
   output: "server",
+  publicDir: "public",
   adapter: node({
     mode: "standalone",
   }),

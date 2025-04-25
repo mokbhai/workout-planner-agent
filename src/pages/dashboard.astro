@@ -3,8 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import ActivityChart from '../components/ActivityChart';
 
 const userCookie = Astro.cookies.get('user');
-// const accessToken = Astro.cookies.get('access_token');
-const accessToken = { value: '87466f5100fbcdf7ce5a74df7486f0a899f526a4' };
+const accessToken = Astro.cookies.get('access_token');
 
 let user = null;
 if (userCookie) {

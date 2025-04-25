@@ -10,7 +10,7 @@ const Hero: React.FC = () => {
           from smart watches, Strava, and more.
         </p>
         <div className="cta-buttons">
-          <a href="#get-started" className="primary-button">
+          <a href="/auth?tab=signup" className="primary-button">
             Get Started
           </a>
           <a href="#how-it-works" className="secondary-button">

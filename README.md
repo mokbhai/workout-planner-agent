@@ -1,125 +1,96 @@
-# Airia Landing Agent
+# Airia - AI-Powered Workout Planning
 
-This is the landing page for Airia Technologies Private Limited, built with Astro.js and React.
+Airia is a personal AI workout coach that adapts to your fitness journey, powered by your fitness data from smart watches, Strava, and more.
 
-## 🚀 Getting Started
+## Features
+
+- Personalized workout plans based on your fitness data
+- Integration with Strava for activity tracking
+- Modern, responsive UI built with Astro, React, and Tailwind CSS
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- npm (v8 or higher)
-- Docker (optional, for containerized deployment)
+- Node.js (v16 or higher)
+- npm or yarn
+- A Strava API account
 
-### Local Development
+### Installation
 
-1. **Clone the repository**
+1. Clone the repository:
 
-```bash
-git clone https://github.com/your-username/landing-agent.git
-cd landing-agent
-```
+   ```
+   git clone https://github.com/yourusername/airia-landing-agent.git
+   cd airia-landing-agent
+   ```
 
-2. **Install dependencies**
+2. Install dependencies:
 
-```bash
-npm install
-```
+   ```
+   npm install
+   ```
 
-3. **Set up environment variables (optional)**
+3. Create a `.env` file in the root directory with the following variables:
 
-Create a `.env` file in the root directory with the following variables:
+   ```
+   # Server configuration
+   PORT=3000
+   NODE_ENV=development
 
-```
-# Server Configuration
-PORT=4000
-```
+   # Strava OAuth configuration
+   STRAVA_CLIENT_ID=your_strava_client_id
+   STRAVA_CLIENT_SECRET=your_strava_client_secret
+   STRAVA_CALLBACK_URL=http://localhost:3000/auth/strava/callback
 
-4. **Start the development server**
+   # Session configuration
+   SESSION_SECRET=airia-secret-key-change-in-production
+   ```
 
-```bash
-npm run dev
-```
+### Setting up Strava OAuth
 
-This will start the development server at [http://localhost:4321](http://localhost:4321) (or the port specified in your .env file).
+1. Go to [Strava API Settings](https://www.strava.com/settings/api)
+2. Create a new application with the following details:
+   - Application Name: Airia
+   - Website: http://localhost:3000
+   - Authorization Callback Domain: localhost
+3. After creating the application, you'll receive a Client ID and Client Secret
+4. Update your `.env` file with these credentials
 
-### Building for Production
+### Running the Application
 
-1. **Build the project**
+1. Start the development server:
 
-```bash
-npm run build
-```
+   ```
+   npm run dev
+   ```
 
-2. **Preview the production build**
+2. Start the authentication server:
 
-```bash
-npm run preview
-```
+   ```
+   npm run server
+   ```
 
-or
+3. Open your browser and navigate to `http://localhost:3000`
 
-```bash
-node dist/server/entry.mjs
-```
+## Authentication Flow
 
-## 🐳 Docker Deployment
+The application uses Passport.js with the Strava OAuth2 strategy for authentication. The flow is as follows:
 
-### Using Docker
+1. User clicks "Sign in with Strava" or "Sign up with Strava"
+2. User is redirected to Strava's authorization page
+3. After authorizing, Strava redirects back to the application
+4. The application creates or updates the user account and logs them in
+5. User is redirected to the dashboard
 
-1. **Build the Docker image**
+## Project Structure
 
-```bash
-docker build -t airia-landing-agent .
-```
+- `src/components/` - React components
+- `src/pages/` - Astro pages
+- `src/layouts/` - Astro layouts
+- `src/server/` - Express server and Passport configuration
+- `src/assets/` - Static assets
 
-2. **Run the container**
+## License
 
-```bash
-docker run -p 4000:4000 -e PORT=4000 airia-landing-agent
-```
-
-The application will be available at [http://localhost:4000](http://localhost:4000).
-
-### Using Docker Compose
-
-1. **Create a docker-compose.yml file**
-
-```yaml
-version: "3"
-services:
-  web:
-    build: .
-    ports:
-      - "4000:4000"
-    environment:
-      - PORT=4000
-```
-
-2. **Start the services**
-
-```bash
-docker-compose up
-```
-
-## 📁 Project Structure
-
-- `src/` - Source code
-  - `components/` - React components
-  - `layouts/` - Layout components
-  - `pages/` - Astro pages
-- `public/` - Static assets
-- `dist/` - Build output (generated)
-
-## 🛠️ Technologies Used
-
-- [Astro](https://astro.build/) - Web Framework
-- [React](https://reactjs.org/) - UI Library
-- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
-
-## 📝 License
-
-This project is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
-
-## 📞 Contact
-
-For any questions or support, please contact us at [privacy@airia.in](mailto:privacy@airia.in).
+This project is licensed under the MIT License - see the LICENSE file for details.

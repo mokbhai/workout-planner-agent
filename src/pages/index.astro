@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import HowItWorks from '../components/HowItWorks';
+import Partners from '../components/Partners';
 // import CTA from '../components/CTA';
 import Footer from '../components/Footer';
 ---
@@ -12,6 +13,7 @@ import Footer from '../components/Footer';
     <Hero  />
     <Features  />
     <HowItWorks  />
+    <Partners  />
     <!-- <CTA  /> -->
     <Footer  />
   </main>
@@ -248,7 +250,7 @@ import Footer from '../components/Footer';
   }
 
   .footer {
-    background-color: var(--background-alt);
+    background-color: var(--background-color);
     padding: 5rem 1rem 2rem;
   }
 
@@ -313,5 +315,59 @@ import Footer from '../components/Footer';
     .cta-buttons {
       flex-direction: column;
     }
+  }
+
+  .partners-section {
+    background-color: var(--background-alt);
+    padding: 5rem 1rem;
+  }
+
+  .partners-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .partners-description {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+  }
+
+  .partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .partner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+
+  .partner-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .partner-logo {
+    height: 60px;
+    margin-bottom: 1rem;
+    object-fit: contain;
+  }
+
+  .partners-note {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
 </style> 

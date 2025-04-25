@@ -9,6 +9,14 @@ const Footer: React.FC = () => {
           <p>
             Your personal AI workout coach that adapts to your fitness journey.
           </p>
+          <div className="mt-4">
+            <a
+              href="/auth?tab=login"
+              className="text-indigo-600 hover:text-indigo-800"
+            >
+              Log In
+            </a>
+          </div>
           {/* <div className="social-links">
             <a
               href="https://twitter.com/airia"
@@ -87,7 +95,10 @@ const Footer: React.FC = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Airia Technologies Private Limited. All rights reserved.</p>
+        <p>
+          &copy; {new Date().getFullYear()} Airia Technologies Private Limited.
+          All rights reserved.
+        </p>
       </div>
     </footer>
   );

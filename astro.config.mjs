@@ -23,6 +23,10 @@ export default defineConfig({
     port: command === "dev" ? 4321 : PORT,
   }),
 
+  redirects: {
+    "/api/auth": "https://strava-integration.jainparichay.online/api/auth/strava",
+  },
+
   integrations: [react()],
 
   vite: {

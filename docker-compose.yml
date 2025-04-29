@@ -7,3 +7,15 @@ services:
     environment:
       - PORT=4000
       - NODE_ENV=production
+      - REDIS_URI=redis://redis:6379
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

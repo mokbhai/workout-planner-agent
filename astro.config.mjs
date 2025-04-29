@@ -25,7 +25,8 @@ export default defineConfig({
   }),
 
   redirects: {
-    "/api/auth": "https://strava-integration.jainparichay.online/api/auth/strava",
+    "/api/auth/strava":
+      "https://strava-integration.jainparichay.online/api/auth/strava",
   },
 
   integrations: [react()],

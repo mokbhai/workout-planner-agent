@@ -18,11 +18,21 @@
   }
 }
 
+@keyframes scaleIn {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
 .hero-container {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  touch-action: pan-y pinch-zoom;
 }
 
 .hero-background {
@@ -33,7 +43,7 @@
   height: 100%;
   background-size: cover;
   background-position: center;
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.6s ease-in-out;
 }
 
 .hero-background::before {
@@ -43,8 +53,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  animation: fadeIn 0.6s ease-out;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 .hero-content {
@@ -56,23 +73,46 @@
   margin-top: 30vh;
   opacity: 0;
   animation: slideUp 0.8s ease-out forwards;
+  transition: transform 0.6s ease-in-out;
 }
 
 .hero-content.left {
   margin-left: 10%;
   text-align: left;
+  transform: translateX(-100px);
 }
 
 .hero-content.right {
   margin-left: auto;
   margin-right: 10%;
   text-align: right;
+  transform: translateX(100px);
 }
 
 .hero-content.center {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  transform: translateY(50px);
+}
+
+.hero-content.left,
+.hero-content.right,
+.hero-content.center {
+  animation: none;
+  opacity: 1;
+}
+
+.hero-content.left.animate {
+  transform: translateX(0);
+}
+
+.hero-content.right.animate {
+  transform: translateX(0);
+}
+
+.hero-content.center.animate {
+  transform: translateY(0);
 }
 
 .hero-content h1 {
@@ -110,10 +150,19 @@
 }
 
 .hero-content h1 .highlight {
-  color: #ff4b4b;
+  background: linear-gradient(120deg, #4f46e5 0%, #0ea5e9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   position: relative;
   display: inline-block;
   padding: 0 10px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .hero-content h1 .highlight::after {
@@ -123,19 +172,16 @@
   right: 0;
   bottom: 5px;
   height: 8px;
-  background: rgba(255, 75, 75, 0.3);
+  background: linear-gradient(
+    120deg,
+    rgba(79, 70, 229, 0.2) 0%,
+    rgba(14, 165, 233, 0.2) 100%
+  );
   z-index: -1;
   transform: scaleX(0);
   animation: scaleIn 0.4s ease-out 0.8s forwards;
-}
-
-@keyframes scaleIn {
-  0% {
-    transform: scaleX(0);
-  }
-  100% {
-    transform: scaleX(1);
-  }
+  will-change: transform;
+  transform-origin: left;
 }
 
 .hero-content .cta-buttons {
@@ -162,14 +208,36 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: white;
-  background-color: #4f46e5;
+  background: linear-gradient(120deg, #4f46e5 0%, #0ea5e9 100%);
   border-radius: 4px;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #0ea5e9 0%, #4f46e5 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .primary-button:hover {
-  background-color: #4338ca;
   transform: translateY(-2px);
+}
+
+.primary-button:hover::before {
+  opacity: 1;
+}
+
+.primary-button span {
+  position: relative;
+  z-index: 1;
 }
 
 .slider-nav {
@@ -178,15 +246,15 @@
   transform: translateY(-50%);
   width: 50px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 24px;
   transition: all 0.3s ease;
   z-index: 3;
   opacity: 0;
@@ -194,16 +262,17 @@
 }
 
 .slider-nav:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-50%) scale(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .slider-nav.prev {
-  left: 20px;
+  left: 2rem;
 }
 
 .slider-nav.next {
-  right: 20px;
+  right: 2rem;
 }
 
 .slider-nav svg {
@@ -212,7 +281,7 @@
   fill: currentColor;
 }
 
-.slider-dots {
+.slider-progress {
   position: absolute;
   bottom: 2rem;
   left: 50%;
@@ -224,30 +293,50 @@
   animation: fadeIn 0.6s ease-out 1s forwards;
 }
 
+.progress-item {
+  position: relative;
+  width: 40px;
+  height: 4px;
+}
+
 .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid white;
-  background: transparent;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .dot.active {
   background: white;
 }
 
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(120deg, #4f46e5 0%, #0ea5e9 100%);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
 @media (max-width: 768px) {
   .hero-content {
     margin: 25vh auto 0;
-    padding: 1rem;
-    text-align: center;
+    padding: 1.5rem;
+    max-width: 100%;
   }
 
   .hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
+    font-size: 2.5rem;
   }
 
   .hero-content h1 .highlight::after {
@@ -257,8 +346,7 @@
 
   .hero-content.left,
   .hero-content.right {
-    margin-left: auto;
-    margin-right: auto;
+    margin: 25vh 1.5rem 0;
     text-align: center;
   }
 
@@ -275,14 +363,27 @@
   .slider-nav {
     width: 40px;
     height: 40px;
-    font-size: 20px;
+    transform: translateY(-50%) scale(0.9);
   }
 
   .slider-nav.prev {
-    left: 10px;
+    left: 1rem;
   }
 
   .slider-nav.next {
-    right: 10px;
+    right: 1rem;
+  }
+
+  .slider-nav svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .slider-progress {
+    bottom: 1.5rem;
+  }
+
+  .progress-item {
+    width: 30px;
   }
 }

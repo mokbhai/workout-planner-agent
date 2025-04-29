@@ -1,8 +1,49 @@
 import type { APIRoute } from "astro";
 import jwt from "jsonwebtoken";
-import { getOTP, deleteOTP } from "../../../utils/redis";
+import {
+  getRedisCache,
+  delRedisCache,
+  setRedisCache,
+} from "../../../utils/redis";
+import prisma from "../../../utils/prisma";
+import { generateTokens } from "./refresh-token";
 
-export const POST: APIRoute = async ({ request }) => {
+export const logAttempt = async (
+  phoneNumber: string,
+  type: string,
+  status: string,
+  metadata: Record<string, any>,
+  request: Request
+) => {
+  // await prisma.authAttempt.create({
+  //   data: {
+  //     phoneNumber: phoneNumber,
+  //     type: type,
+  //     status: status,
+  //     ipAddress:
+  //       request.headers.get("x-forwarded-for") ||
+  //       request.headers.get("x-real-ip"),
+  //     userAgent: request.headers.get("user-agent"),
+  //     metadata: metadata,
+  //   },
+  // });
+  await setRedisCache(
+    `auth_attempt:${phoneNumber}`,
+    JSON.stringify({
+      type,
+      status,
+      metadata,
+      ipAddress:
+        request.headers.get("x-forwarded-for") ||
+        request.headers.get("x-real-ip"),
+      userAgent: request.headers.get("user-agent"),
+      timestamp: Date.now(),
+    }),
+    3600
+  );
+};
+
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const body = await request.json();
     const { phoneNumber, otp } = body;
@@ -18,10 +59,26 @@ export const POST: APIRoute = async ({ request }) => {
     const cleanNumber = phoneNumber.replace(/^\+?91/, "");
     const formattedNumber = `91${cleanNumber}`;
 
+    // Find user
+    let user = await prisma.user.findUnique({
+      where: { phoneNumber: formattedNumber },
+    });
+
     // Get stored OTP from Redis
-    const storedOTP = await getOTP(formattedNumber);
+    const storedOTP = await getRedisCache(`otp:${formattedNumber}`);
 
     if (!storedOTP) {
+      // Log failed attempt
+      logAttempt(
+        formattedNumber,
+        "VERIFY_OTP",
+        "FAILED",
+        {
+          reason: "OTP_EXPIRED",
+        },
+        request
+      );
+
       return new Response(
         JSON.stringify({ error: "OTP not found or expired" }),
         { status: 400 }
@@ -30,57 +87,78 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Verify OTP
     if (storedOTP !== otp) {
+      // Log failed attempt
+      logAttempt(
+        formattedNumber,
+        "VERIFY_OTP",
+        "FAILED",
+        {
+          reason: "INVALID_OTP",
+        },
+        request
+      );
+
       return new Response(JSON.stringify({ error: "Invalid OTP" }), {
         status: 400,
       });
     }
 
     // OTP verified successfully, clean up
-    await deleteOTP(formattedNumber);
+    await delRedisCache(`otp:${formattedNumber}`);
 
-    // Check if JWT_SECRET is set
-    const jwtSecret = import.meta.env.JWT_SECRET;
-    if (!jwtSecret) {
-      console.error("JWT_SECRET is not configured");
+    // Update user status
+    user = await prisma.user.upsert({
+      where: { phoneNumber: formattedNumber },
+      update: {
+        lastLoginAt: new Date(),
+      },
+      create: {
+        phoneNumber: formattedNumber,
+        lastLoginAt: new Date(),
+      },
+    });
+
+    // Log successful attempt
+    await logAttempt(formattedNumber, "VERIFY_OTP", "SUCCESS", {}, request);
+
+    const { authToken, refreshToken } = generateTokens(user, cookies, true);
+
+    cookies.set("user", JSON.stringify(user), {
+      httpOnly: true,
+      sameSite: "strict",
+      path: "/",
+    });
+
+    if (!user?.name) {
       return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
-        { status: 500 }
+        JSON.stringify({
+          success: true,
+          message: "User created! Complete your profile to continue",
+          token: authToken
+        }),
+        { status: 201 }
       );
     }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        phoneNumber: formattedNumber,
-        timestamp: Date.now(),
-      },
-      jwtSecret,
-      {
-        expiresIn: "7d",
-        algorithm: "HS256",
-      }
-    );
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "OTP verified successfully",
-        token,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Set-Cookie": `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${
-            7 * 24 * 60 * 60
-          }`, // 7 days
+        token: authToken,
+        user: {
+          id: user.id,
+          phoneNumber: user.phoneNumber,
+          name: user?.name,
+          profileImageUrl: user?.profileImageUrl,
         },
-      }
+      }),
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return new Response(
       JSON.stringify({
-        error: error instanceof Error ? error.message : "Failed to verify OTP",
+        error: "Failed to verify OTP",
       }),
       { status: 500 }
     );

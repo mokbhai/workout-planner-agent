@@ -3,31 +3,28 @@ import Redis from 'ioredis';
 // Initialize Redis client
 const redis = new Redis(import.meta.env.REDIS_URI);
 
-// OTP related functions
-export const storeOTP = async (phoneNumber: string, otp: string) => {
-  const key = `otp:${phoneNumber}`;
-  await redis.set(key, otp, 'EX', 300); // 5 minutes expiration
+// set redis cache
+export const setRedisCache = async (key: string, value: string, ttl?: number) => {
+  if (!ttl) {
+    await redis.set(key, value);
+  } else {
+    await redis.set(key, value, 'EX', ttl);
+  }
 };
 
-export const getOTP = async (phoneNumber: string) => {
-  const key = `otp:${phoneNumber}`;
+// get redis cache
+export const getRedisCache = async (key: string) => {
   return await redis.get(key);
 };
 
-export const deleteOTP = async (phoneNumber: string) => {
-  const key = `otp:${phoneNumber}`;
-  await redis.del(key);
-};
-
-// Rate limiting functions
-export const setResendCooldown = async (phoneNumber: string) => {
-  const key = `cooldown:${phoneNumber}`;
-  await redis.set(key, '1', 'EX', 30); // 30 seconds cooldown
-};
-
-export const checkResendCooldown = async (phoneNumber: string) => {
-  const key = `cooldown:${phoneNumber}`;
+// check redis cache
+export const checkRedisCache = async (key: string) => {
   return await redis.exists(key);
+};
+
+// delete redis cache
+export const delRedisCache = async (key: string) => {
+  await redis.del(key);
 };
 
 // Error handling

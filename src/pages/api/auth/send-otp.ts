@@ -1,48 +1,34 @@
 import type { APIRoute } from "astro";
 import {
-  storeOTP,
-  checkResendCooldown,
-  setResendCooldown,
+  setRedisCache,
+  getRedisCache,
+  delRedisCache,
 } from "../../../utils/redis";
 import { sendWhatsAppMessage } from "../../../utils/message";
+import { logAttempt } from "./verify-otp";
 
 // Generate a random 6-digit OTP
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Send OTP via WhatsApp
-const sendWhatsAppOTP = async (phoneNumber: string, otp: string) => {
-  const url = `${import.meta.env.EVO_SERVER_URL}/message/sendText/${
-    import.meta.env.EVO_INSTANCE
-  }`;
-
-  await sendWhatsAppMessage(
-    phoneNumber,
-    `Your AIRIA verification code is: *${otp}*. \nValid for 5 minutes.`
-  );
-  
-  return true;
-};
-
 export const POST: APIRoute = async ({ request }) => {
+  const body = await request.json();
+  const { phoneNumber } = body;
+
+  if (!phoneNumber) {
+    return new Response(JSON.stringify({ error: "Phone number is required" }), {
+      status: 400,
+    });
+  }
+
+  // Format phone number (remove +91 prefix if present)
+  const cleanNumber = phoneNumber.replace(/^\+?91/, "");
+  const formattedNumber = `91${cleanNumber}`;
+
   try {
-    const body = await request.json();
-    const { phoneNumber } = body;
-
-    if (!phoneNumber) {
-      return new Response(
-        JSON.stringify({ error: "Phone number is required" }),
-        { status: 400 }
-      );
-    }
-
-    // Format phone number (remove +91 prefix if present)
-    const cleanNumber = phoneNumber.replace(/^\+?91/, "");
-    const formattedNumber = `91${cleanNumber}`;
-
     // Check for rate limiting
-    const isInCooldown = await checkResendCooldown(formattedNumber);
+    const isInCooldown = await getRedisCache(`cooldown:${formattedNumber}`);
     if (isInCooldown) {
       return new Response(
         JSON.stringify({ error: "Please wait before requesting another OTP" }),
@@ -53,15 +39,33 @@ export const POST: APIRoute = async ({ request }) => {
     // Generate OTP
     const otp = generateOTP();
 
-    // Store OTP in Redis with 5-minute expiration
-    await storeOTP(formattedNumber, otp);
+    // Store OTP in Redis with expiration
+    const OTP_TIMEOUT = import.meta.env.OTP_TIMEOUT || 300;
+    await setRedisCache(`otp:${formattedNumber}`, otp, OTP_TIMEOUT);
 
     // Set cooldown for resend
-    await setResendCooldown(formattedNumber);
+    const COOLDOWN_TIMEOUT = import.meta.env.COOLDOWN_TIMEOUT || 30;
+    await setRedisCache(
+      `cooldown:${formattedNumber}`,
+      "true",
+      COOLDOWN_TIMEOUT
+    );
 
     // Send OTP via WhatsApp
-    await sendWhatsAppOTP(formattedNumber, otp);
+    await sendWhatsAppMessage(
+      formattedNumber,
+      `Your AIRIA verification code is: *${otp}*. \nValid for 5 minutes.`
+    );
 
+    logAttempt(
+      formattedNumber,
+      "SEND_OTP",
+      "SUCCESS",
+      {
+        reason: "SUCCESS_TO_SEND_OTP",
+      },
+      request
+    );
     return new Response(
       JSON.stringify({
         success: true,
@@ -71,6 +75,17 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error("Error sending OTP:", error);
+    await logAttempt(
+      formattedNumber,
+      "SEND_OTP",
+      "FAILED",
+      {
+        reason: "FAILED_TO_SEND_OTP",
+        error: error instanceof Error ? error.message : "Failed to send OTP",
+      },
+      request
+    );
+    await delRedisCache(`cooldown:${formattedNumber}`);
     return new Response(
       JSON.stringify({
         error: "Failed to send OTP",

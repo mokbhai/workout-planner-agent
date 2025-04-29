@@ -10,6 +10,8 @@ const Auth: React.FC = () => {
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   useEffect(() => {
     // Check for error in URL parameters
@@ -84,6 +86,9 @@ const Auth: React.FC = () => {
     e.preventDefault();
     if (validatePhoneNumber()) {
       try {
+        setIsLoading(true);
+        setAuthError(null);
+
         const response = await fetch("/api/auth/send-otp", {
           method: "POST",
           headers: {
@@ -113,6 +118,8 @@ const Auth: React.FC = () => {
             ? error.message
             : "Failed to send OTP. Please try again."
         );
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -121,6 +128,9 @@ const Auth: React.FC = () => {
     e.preventDefault();
     if (validateOTP()) {
       try {
+        setIsVerifying(true);
+        setAuthError(null);
+
         const response = await fetch("/api/auth/verify-otp", {
           method: "POST",
           headers: {
@@ -134,8 +144,13 @@ const Auth: React.FC = () => {
 
         const data = await response.json();
 
+        console.log(data);
         if (!response.ok) {
           throw new Error(data.error || "Failed to verify OTP");
+        }
+
+        if (!data.user || !data.user.name) {
+          window.location.href = "/user/onboarding";
         }
 
         // Redirect to dashboard or home page after successful verification
@@ -146,6 +161,8 @@ const Auth: React.FC = () => {
             ? error.message
             : "Invalid OTP. Please try again."
         );
+      } finally {
+        setIsVerifying(false);
       }
     }
   };
@@ -153,6 +170,9 @@ const Auth: React.FC = () => {
   const handleResendOTP = async () => {
     if (!isResendDisabled) {
       try {
+        setIsLoading(true);
+        setAuthError(null);
+
         const response = await fetch("/api/auth/send-otp", {
           method: "POST",
           headers: {
@@ -179,18 +199,20 @@ const Auth: React.FC = () => {
             ? error.message
             : "Failed to resend OTP. Please try again."
         );
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleStravaLogin = () => {
-    window.location.href = "/api/auth";
+    window.location.href = "/api/auth/strava";
   };
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        {step === "phone" ? "Login with Phone" : "Enter OTP"}
+        {step === "phone" ? "Continue with Phone" : "Enter OTP"}
       </h2>
 
       {authError && (
@@ -221,9 +243,10 @@ const Auth: React.FC = () => {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={`flex-1 min-w-0 block border-2 w-full px-3 py-2 rounded-none rounded-r-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm ${
                   errors.phoneNumber ? "border-red-500" : "border-gray-300"
-                }`}
+                } ${isLoading ? "bg-gray-100" : ""}`}
                 placeholder="Enter your phone number"
                 maxLength={10}
               />
@@ -246,9 +269,10 @@ const Auth: React.FC = () => {
               name="otp"
               value={formData.otp}
               onChange={handleChange}
+              disabled={isVerifying}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm ${
                 errors.otp ? "border-red-500" : "border-gray-300"
-              }`}
+              } ${isVerifying ? "bg-gray-100" : ""}`}
               placeholder="Enter 6-digit OTP"
               maxLength={6}
             />
@@ -260,9 +284,11 @@ const Auth: React.FC = () => {
               <button
                 type="button"
                 onClick={handleResendOTP}
-                disabled={isResendDisabled}
+                disabled={isResendDisabled || isLoading}
                 className={`text-indigo-600 hover:text-indigo-800 font-medium ${
-                  isResendDisabled ? "opacity-50 cursor-not-allowed" : ""
+                  isResendDisabled || isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
                 }`}
               >
                 {isResendDisabled ? `Resend in ${resendTimer}s` : "Resend OTP"}
@@ -274,9 +300,68 @@ const Auth: React.FC = () => {
         <div>
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            disabled={step === "phone" ? isLoading : isVerifying}
+            className={`w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors flex items-center justify-center ${
+              (step === "phone" ? isLoading : isVerifying)
+                ? "opacity-70 cursor-not-allowed"
+                : ""
+            }`}
           >
-            {step === "phone" ? "Send OTP" : "Verify OTP"}
+            {step === "phone" ? (
+              isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Sending OTP...
+                </>
+              ) : (
+                "Send OTP"
+              )
+            ) : isVerifying ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Verifying...
+              </>
+            ) : (
+              "Verify OTP"
+            )}
           </button>
         </div>
       </form>

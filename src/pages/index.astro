@@ -1,21 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero';
-import Features from '../components/Features';
-import HowItWorks from '../components/HowItWorks';
+import TrainingApproach from '../components/TrainingApproach';
 import Partners from '../components/Partners';
+import FloatingCTA from '../components/FloatingCTA';
 // import CTA from '../components/CTA';
 import Footer from '../components/Footer';
 ---
 
-<Layout title="Airia - AI-Powered Workout Planning">
+<Layout title="Airia - AI-Powered Running Coach">
   <main>
-    <Hero  />
-    <Features  />
-    <HowItWorks  />
-    <Partners  />
-    <!-- <CTA  /> -->
-    <Footer  />
+    <Hero client:load />
+    <TrainingApproach />
+    <Partners />
+    <!-- <CTA /> -->
+    <Footer />
+    <FloatingCTA client:load />
   </main>
 </Layout>
 
@@ -250,7 +250,7 @@ import Footer from '../components/Footer';
   }
 
   .footer {
-    background-color: var(--background-color);
+    background-color: var(--background-alt);
     padding: 5rem 1rem 2rem;
   }
 
@@ -318,7 +318,7 @@ import Footer from '../components/Footer';
   }
 
   .partners-section {
-    background-color: var(--background-alt);
+    background-color: var(--background-color);
     padding: 5rem 1rem;
   }
 
@@ -369,5 +369,10 @@ import Footer from '../components/Footer';
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+  }
+
+
+  .training-approach {
+    background-color: var(--background-alt);
   }
 </style> 

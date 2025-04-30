@@ -62,10 +62,12 @@ const Hero: React.FC = () => {
   const slideTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const goToNextSlide = useCallback(() => {
+    resetAnimation();
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   }, []);
 
   const goToPrevSlide = useCallback(() => {
+    resetAnimation();
     setCurrentSlide(
       (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
     );

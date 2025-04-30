@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import type { HeroSlide } from "@/components/data/heroSlides";
 
 
-const SLIDE_DURATION = 5000;
+const SLIDE_DURATION = 3000;
 
 function ElegantShape({
   className,

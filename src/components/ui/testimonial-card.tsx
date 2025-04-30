@@ -1,19 +1,35 @@
-import * as React from "react"
-import { Star } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import * as React from "react";
+import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 
 export interface TestimonialProps extends React.HTMLAttributes<HTMLDivElement> {
-  name: string
-  role: string
-  company?: string
-  testimonial: string
-  rating?: number
-  image?: string
+  name: string;
+  role: string;
+  company?: string;
+  testimonial: string;
+  rating?: number;
+  image?: string;
 }
 
 const Testimonial = React.forwardRef<HTMLDivElement, TestimonialProps>(
-  ({ name, role, company, testimonial, rating = 5, image, className, ...props }, ref) => {
+  (
+    {
+      name,
+      role,
+      company,
+      testimonial,
+      rating = 5,
+      image,
+      className,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div
         ref={ref}
@@ -52,8 +68,10 @@ const Testimonial = React.forwardRef<HTMLDivElement, TestimonialProps>(
             <div className="flex items-center gap-4">
               {image && (
                 <Avatar>
-                  <AvatarImage src={image} alt={name} height={48} width={48} />
-                  <AvatarFallback>{name[0]}</AvatarFallback>
+                  <AvatarImage src={image || " "} alt={name} />
+                  <AvatarFallback>
+                    {name[0]?.toUpperCase() || ""}
+                  </AvatarFallback>
                 </Avatar>
               )}
 
@@ -68,9 +86,9 @@ const Testimonial = React.forwardRef<HTMLDivElement, TestimonialProps>(
           </div>
         </div>
       </div>
-    )
+    );
   }
-)
-Testimonial.displayName = "Testimonial"
+);
+Testimonial.displayName = "Testimonial";
 
-export { Testimonial }
+export { Testimonial };

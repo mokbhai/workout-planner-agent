@@ -4,7 +4,7 @@ import TrainingApproach from '@/components/tsx/TrainingApproach';
 import Partners from '@/components/tsx/Partners';
 import FloatingCTA from '@/components/tsx/FloatingCTA';
 import Footer from '@/components/tsx/Footer';
-import { HeroGeometric } from "@/components/ui/shape-landing-hero";
+import { HeroGeometric } from "@/components/custom-ui/shape-landing-hero";
 import { heroSlides, testimonials } from "@/components/data";
 import { Testimonial } from "@/components/ui/testimonial-card";
 import { CTA } from "@/components/ui/call-to-action"
@@ -23,16 +23,14 @@ import { CTA } from "@/components/ui/call-to-action"
         ))}
       </div>
     </div>
-    <div class="w-full">
-      <CTA 
-        client:load 
-        title="Join Our Beta Program" 
-        badge="Limited Access" 
-        description="Be among the first to experience the future of AI-powered running coaching. Get early access to exclusive features and help shape the future of Airia." 
-        buttonText="Join Beta Now" 
-        buttonLink="/auth" 
-      />
-    </div>
+    <CTA 
+      client:load 
+      title="Join Our Beta Program" 
+      badge="Limited Access" 
+      description="Be among the first to experience the future of AI-powered running coaching. Get early access to exclusive features and help shape the future of Airia." 
+      buttonText="Join Beta Now" 
+      buttonLink="/auth" 
+    />
     <Partners />
     <Footer />
     <FloatingCTA client:load />

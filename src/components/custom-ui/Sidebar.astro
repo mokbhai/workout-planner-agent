@@ -1,0 +1,78 @@
+---
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/starwind/avatar";
+
+interface Props {
+  user: {
+    name: string | null;
+    profileImageUrl: string | null;
+  };
+  currentPath: string;
+  navigation: { name: string; href: string; icon: string }[];
+  title: string;
+}
+
+const { user, currentPath, navigation, title } = Astro.props;
+
+---
+<div class="hidden lg:flex lg:flex-shrink-0">
+  <div class="flex flex-col w-64">
+    <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-white border-r border-gray-200">
+      <div class="flex items-center flex-shrink-0 px-4">
+        <a href="/" class="text-2xl font-bold text-indigo-600">
+          {title}
+        </a>
+      </div>
+      <div class="mt-5 flex-grow flex flex-col">
+        <nav class="flex-1 px-2 space-y-1">
+          {navigation.map((item) => {
+            const isActive = currentPath === item.href;
+            return (
+              <a
+                href={item.href}
+                class={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  isActive
+                    ? "bg-indigo-50 text-indigo-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <svg
+                  class={`mr-3 h-5 w-5 ${
+                    isActive ? "text-indigo-600" : "text-gray-400 group-hover:text-gray-500"
+                  }`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={item.icon} />
+                </svg>
+                {item.name}
+              </a>
+            );
+          })}
+        </nav>
+      </div>
+      <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+        <div class="flex items-center">
+          <div>
+            <Avatar>
+              <AvatarImage src={user.profileImageUrl || ' '} alt={user.name || 'User'} />
+              <AvatarFallback>{user.name?.charAt(0).toUpperCase() || ''}</AvatarFallback>
+            </Avatar>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+              {user.name || 'User'}
+            </p>
+            <a
+              href="/auth/logout"
+              class="text-xs font-medium text-gray-500 group-hover:text-gray-700"
+            >
+              Sign out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -28,12 +28,11 @@ export const signOut = async (): Promise<void> => {
       throw new Error("Failed to sign out");
     }
 
-    // Redirect to the auth page
-    window.location.href = "/auth";
+    // Redirect to the home page
+    window.location.href = "/";
   } catch (error) {
     console.error("Sign out error:", error);
-    // Still redirect to auth page even if the API call fails
-    window.location.href = "/auth";
+    window.location.href = "/";
   }
 };
 

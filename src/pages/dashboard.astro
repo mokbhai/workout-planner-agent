@@ -1,106 +1,27 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import ActivityChart from '@/components/tsx/ActivityChart';
-
-const userCookie = Astro.cookies.get('user');
+import InternalLayout from '@/layouts/InternalLayout.astro';
 const accessToken = Astro.cookies.get('auth_token');
-let user = null;
-if (userCookie) {
-  try {
-    user = JSON.parse(userCookie.value);
-  } catch (e) {
-    console.error('Error parsing user cookie:', e);
-  }
-}
-
-if (!user) {
-  return Astro.redirect('/auth');
-}
-
-if (!user.name) {
-  return Astro.redirect("/user/onboarding");
-}
 ---
 
-<Layout title="Airia - Dashboard">
-  <main class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center">
-            <img 
-              src={user.profile_medium || user.profile || "https://via.placeholder.com/40"} 
-              alt={`${user.firstname} ${user.lastname}`} 
-              class="h-10 w-10 rounded-full mr-3"
-            />
-            <span class="text-gray-700 font-medium">{user.firstname} {user.lastname}</span>
-          </div>
-          <a href="/auth/logout" class="text-indigo-600 hover:text-indigo-800 font-medium">
-            Logout
-          </a>
-        </div>
-      </div>
-    </header>
-    
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-          <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500">Your Strava profile details</p>
-          </div>
-          <div class="border-t border-gray-200">
-            <dl>
-              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500">Full name</dt>
-                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.firstname} {user.lastname}</dd>
+<InternalLayout title="Airia - Dashboard">
+    <main class="flex-1 overflow-y-auto bg-gray-50">
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+          <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
+            <div class="text-center">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome to Airia</h2>
+              <p class="text-gray-600 mb-6">Your personal AI workout coach is ready to help you achieve your fitness goals.</p>
+              <div class="flex justify-center space-x-4">
+                <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  View Workout Plan
+                </a>
+                <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  Connect More Apps
+                </a>
               </div>
-              <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500">Location</dt>
-                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.city}, {user.state}, {user.country}</dd>
-              </div>
-              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500">Member since</dt>
-                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{new Date(user.created_at).toLocaleDateString()}</dd>
-              </div>
-              <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500">Premium status</dt>
-                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {user.premium ? (
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Premium
-                    </span>
-                  ) : (
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                      Free
-                    </span>
-                  )}
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-
-        <div class="mb-6">
-          <ActivityChart client:load accessToken={accessToken?.value || ''} />
-        </div>
-
-        <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-          <div class="text-center">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome to Airia</h2>
-            <p class="text-gray-600 mb-6">Your personal AI workout coach is ready to help you achieve your fitness goals.</p>
-            <div class="flex justify-center space-x-4">
-              <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                View Workout Plan
-              </a>
-              <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Connect More Apps
-              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-</Layout>
+    </main>
+</InternalLayout>

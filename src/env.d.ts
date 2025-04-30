@@ -1,3 +1,5 @@
+import type { User } from "@prisma/client";
+
 interface ImportMetaEnv {
   readonly PORT: string;
   readonly DATABASE_URI: string;

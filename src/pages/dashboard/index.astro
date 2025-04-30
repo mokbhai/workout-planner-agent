@@ -1,0 +1,80 @@
+---
+import InternalLayout from '@/layouts/InternalLayout.astro';
+import Devices from '../../components/tsx/Devices';
+const userId = Astro.locals.user.id;
+---
+
+<InternalLayout title="Airia - Dashboard">
+    <main class="flex-1 overflow-y-auto bg-gray-50">
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+          <div class="border-4 border-dashed border-gray-200 rounded-lg h-auto p-6">
+            <div class="text-center mb-8">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome to Airia</h2>
+              <p class="text-gray-600 mb-6">Your personal AI workout coach is ready to help you achieve your fitness goals.</p>
+            </div>
+            
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">Connected Devices & Platforms</h3>
+              <p class="text-gray-600 mb-4">Connect your fitness devices and platforms to get personalized workout recommendations based on your activity data.</p>
+              <Devices server:defer userId={userId} />
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">Integration Benefits</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                  <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h4 class="text-lg font-medium text-gray-900">Real-time Data Sync</h4>
+                      <p class="mt-1 text-gray-600">Automatically sync your workouts, heart rate, and other fitness metrics.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h4 class="text-lg font-medium text-gray-900">Personalized Insights</h4>
+                      <p class="mt-1 text-gray-600">Get AI-powered insights based on your activity patterns and performance.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-4">
+                  <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h4 class="text-lg font-medium text-gray-900">Progress Tracking</h4>
+                      <p class="mt-1 text-gray-600">Monitor your fitness progress with detailed analytics and visualizations.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h4 class="text-lg font-medium text-gray-900">Recovery Monitoring</h4>
+                      <p class="mt-1 text-gray-600">Track your recovery status and get recommendations for optimal training.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+</InternalLayout>

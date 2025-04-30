@@ -1,24 +1,40 @@
-FROM node:23-slim AS base
+# Build stage
+FROM node:23-slim AS builder
+
 WORKDIR /app
 
-# By copying only the package.json and package-lock.json here, we ensure that the following `-deps` steps are independent of the source code.
-# Therefore, the `-deps` steps will be skipped if only the source code changes.
+# Copy package files
 COPY package.json package-lock.json ./
 
-FROM base AS prod-deps
-RUN npm install --omit=dev
+# Install dependencies
+RUN npm ci
 
-FROM base AS build-deps
-RUN npm install
-
-FROM build-deps AS build
+# Copy the rest of the application
 COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build the application
 RUN npm run build
 
-FROM base AS runtime
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
+# Production stage
+FROM node:23-slim AS runner
 
-ENV HOST=0.0.0.0
-EXPOSE ${PORT}
-CMD ["node", "./dist/server/entry.mjs"]
+WORKDIR /app
+
+# Copy necessary files from builder
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=4000
+
+# Expose the port
+EXPOSE 4000
+
+# Start the application
+CMD ["node", "dist/server/entry.mjs"]

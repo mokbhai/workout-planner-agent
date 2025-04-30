@@ -1,6 +1,6 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import ActivityChart from '../components/ActivityChart';
+import Layout from '@/layouts/Layout.astro';
+import ActivityChart from '@/components/tsx/ActivityChart';
 
 const userCookie = Astro.cookies.get('user');
 const accessToken = Astro.cookies.get('auth_token');
@@ -17,6 +17,9 @@ if (!user) {
   return Astro.redirect('/auth');
 }
 
+if (!user.name) {
+  return Astro.redirect("/user/onboarding");
+}
 ---
 
 <Layout title="Airia - Dashboard">

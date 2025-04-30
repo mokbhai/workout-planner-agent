@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URI")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  phoneNumber   String    @unique
+  name          String?
+  profileImageUrl String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+  isVerified    Boolean   @default(false)
+  authAttempts  AuthAttempt[]
+}
+
+model AuthAttempt {
+  id          String    @id @default(cuid())
+  phoneNumber String
+  user        User      @relation(fields: [phoneNumber], references: [phoneNumber])
+  type        String    // "SEND_OTP" or "VERIFY_OTP"
+  status      String    // "SUCCESS" or "FAILED"
+  createdAt   DateTime  @default(now())
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?     // Additional information about the attempt
+}

@@ -2,17 +2,17 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-section">
-          <h3>Airia</h3>
-          <p>
+    <footer className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-gray-900">Airia</h3>
+          <p className="text-gray-600">
             Your personal AI workout coach that adapts to your fitness journey.
           </p>
           <div className="mt-4">
             <a
               href="/auth?tab=login"
-              className="text-indigo-600 hover:text-indigo-800"
+              className="text-indigo-600 hover:text-indigo-800 transition-colors"
             >
               Log In
             </a>
@@ -42,14 +42,24 @@ const Footer: React.FC = () => {
           </div> */}
         </div>
 
-        <div className="footer-section">
-          <h4>Product</h4>
-          <ul>
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-gray-900">Product</h4>
+          <ul className="space-y-2">
             <li>
-              <a href="#features">Features</a>
+              <a
+                href="#features"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Features
+              </a>
             </li>
             <li>
-              <a href="#how-it-works">How It Works</a>
+              <a
+                href="#how-it-works"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                How It Works
+              </a>
             </li>
             {/* <li>
               <a href="/pricing">Pricing</a>
@@ -78,14 +88,24 @@ const Footer: React.FC = () => {
           </ul>
         </div> */}
 
-        <div className="footer-section">
-          <h4>Legal</h4>
-          <ul>
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-gray-900">Legal</h4>
+          <ul className="space-y-2">
             <li>
-              <a href="/privacy-policy">Privacy Policy</a>
+              <a
+                href="/privacy-policy"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Privacy Policy
+              </a>
             </li>
             <li>
-              <a href="/terms">Terms of Service</a>
+              <a
+                href="/terms"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Terms of Service
+              </a>
             </li>
             {/* <li>
               <a href="/cookies">Cookie Policy</a>
@@ -94,8 +114,8 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="footer-bottom">
-        <p>
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-200">
+        <p className="text-center text-gray-600">
           &copy; {new Date().getFullYear()} Airia Technologies Private Limited.
           All rights reserved.
         </p>

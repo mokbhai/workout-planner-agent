@@ -13,6 +13,7 @@ RUN npm ci
 COPY . .
 
 # Generate Prisma client
+RUN apt-get update -y && apt-get install -y openssl
 RUN npx prisma generate
 
 # Build the application
@@ -26,15 +27,12 @@ WORKDIR /app
 # Copy necessary files from builder
 COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=4000
-
 # Expose the port
-EXPOSE 4000
+EXPOSE ${PORT}
 
 # Start the application
 CMD ["node", "dist/server/entry.mjs"]

@@ -52,14 +52,29 @@ export default async function Devices({ userId }: { userId: string }) {
               </div>
             ) : (
               <div className="space-y-3">
-                <a
-                  href={data.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
-                >
-                  Connect Device
-                </a>
+                {device?.buttonImage ? (
+                  <a
+                    href={data.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full rounded transition-colors"
+                  >
+                    <img
+                      src={device.buttonImage}
+                      alt={device.name}
+                      className="w-full"
+                    />
+                  </a>
+                ) : (
+                  <a
+                    href={data.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+                  >
+                    Connect Device
+                  </a>
+                )}
               </div>
             )}
           </div>

@@ -4,6 +4,7 @@ export interface Device {
   baseUrl: string;
   apiKey: string;
   buttonImage?: string;
+  enabled: boolean;
 }
 
 export const devices: Device[] = [
@@ -13,18 +14,21 @@ export const devices: Device[] = [
     baseUrl: import.meta.env.STRAVA_INTEGRATION_BASE_URL,
     apiKey: import.meta.env.STRAVA_INTEGRATION_API_KEY,
     buttonImage: "/images/partners/strava/btn_strava_connect_with_white.svg",
+    enabled: true,
   },
   // {
   //   id: "garmin",
   //   name: "Garmin",
   //   baseUrl: "https://garmin-integration.jainparichay.online",
   //   apiKey: "1234567890",
+  //   enabled: true,
   // },
   // {
   //   id: "whoop",
   //   name: "Whoop",
   //   baseUrl: "https://whoop-integration.jainparichay.online",
   //   apiKey: "1234567890",
+  //   enabled: true,
   // },
 ];
 

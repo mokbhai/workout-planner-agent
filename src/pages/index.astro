@@ -8,21 +8,52 @@ import { HeroGeometric } from "@/components/custom-ui/shape-landing-hero";
 import { heroSlides, testimonials } from "@/components/data";
 import { Testimonial } from "@/components/ui/testimonial-card";
 import { CTA } from "@/components/ui/call-to-action"
+
+import { getRedisCache, setRedisCache } from '@/utils/redis';
+
+let featureFlag = await getRedisCache(`feature_flag:landing`);
+if (!featureFlag) {
+  featureFlag = JSON.stringify({
+    enabled: true,
+    hero: true,
+    approach: true,
+    testimonials: true,
+    cta: true,
+    partners: true,
+    floatingCTA: true,
+    footer: true,
+    timestamp: new Date().toISOString(),
+  });
+  await setRedisCache(`feature_flag:landing`, featureFlag);
+}
+const parsedFeatureFlag = JSON.parse(featureFlag);
+
+if (!parsedFeatureFlag.enabled) {
+  return Astro.redirect('/404');
+}
+
 ---
 
 <Layout title="Airia - AI-Powered Running Coach">
   <main>
-    <HeroGeometric client:load 
-      heroSlides={heroSlides}
-    />
-    <TrainingApproach client:load />
-    <div class="py-24 px-4 flex justify-center max-w-7xl mx-auto">
-      <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {testimonials.map((testimonial) => (
-          <Testimonial key={testimonial.name} {...testimonial} />
-        ))}
+    {parsedFeatureFlag.hero && (
+      <HeroGeometric client:load 
+        heroSlides={heroSlides}
+      />
+    )}
+    {parsedFeatureFlag.approach && (
+      <TrainingApproach client:load />
+    )}
+    {parsedFeatureFlag.testimonials && (
+      <div class="py-24 px-4 flex justify-center max-w-7xl mx-auto">
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <Testimonial key={testimonial.name} {...testimonial} />
+          ))}
       </div>
     </div>
+    )}
+    {parsedFeatureFlag.cta && (
     <CTA 
       client:load 
       title="Join Our Beta Program" 
@@ -31,9 +62,16 @@ import { CTA } from "@/components/ui/call-to-action"
       buttonText="Join Beta Now" 
       buttonLink="/auth" 
     />
-    <Partners />
-    <Footer />
-    <FloatingCTA client:load />
+    )}
+    {parsedFeatureFlag.partners && (
+      <Partners />
+    )}
+    {parsedFeatureFlag.footer && (
+      <Footer />
+    )}
+    {parsedFeatureFlag.floatingCTA && (
+      <FloatingCTA client:load />
+    )}
   </main>
 </Layout>
 

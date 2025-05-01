@@ -1,7 +1,29 @@
 ---
 import InternalLayout from '@/layouts/InternalLayout.astro';
 import Devices from '../../components/tsx/Devices';
+import { getRedisCache, setRedisCache } from '@/utils/redis';
+
+interface DashboardFeatureFlag {
+  enabled: boolean;
+  integrations: boolean;
+  timestamp: string;
+}
+
 const userId = Astro.locals.user.id;
+const featureFlag = await getRedisCache(`feature_flag:dashboard`);
+let dashboardFeatureFlag: DashboardFeatureFlag | null = JSON.parse(featureFlag || '{}');
+if (!dashboardFeatureFlag || !featureFlag) {
+  dashboardFeatureFlag = {
+    enabled: true,
+    integrations: true,
+    timestamp: new Date().toISOString(),
+  };
+  await setRedisCache(`feature_flag:dashboard`, JSON.stringify(dashboardFeatureFlag));
+}
+
+if (!dashboardFeatureFlag?.enabled) {
+  return Astro.redirect('/404');
+}
 ---
 
 <InternalLayout title="Airia - Dashboard">
@@ -14,12 +36,8 @@ const userId = Astro.locals.user.id;
               <p class="text-gray-600 mb-6">Your personal AI workout coach is ready to help you achieve your fitness goals.</p>
             </div>
             
-            <div class="mb-8">
-              <h3 class="text-xl font-semibold text-gray-900 mb-4">Connected Devices & Platforms</h3>
-              <p class="text-gray-600 mb-4">Connect your fitness devices and platforms to get personalized workout recommendations based on your activity data.</p>
-              <Devices server:defer userId={userId} />
-            </div>
-
+            <Devices server:defer userId={userId} />
+            
             <div class="bg-white rounded-lg shadow-sm p-6">
               <h3 class="text-xl font-semibold text-gray-900 mb-4">Integration Benefits</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

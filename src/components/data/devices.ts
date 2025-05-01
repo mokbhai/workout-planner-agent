@@ -3,6 +3,7 @@ export interface Device {
   name: string;
   baseUrl: string;
   apiKey: string;
+  buttonImage?: string;
 }
 
 export const devices: Device[] = [
@@ -11,6 +12,7 @@ export const devices: Device[] = [
     name: "Strava",
     baseUrl: import.meta.env.STRAVA_INTEGRATION_BASE_URL,
     apiKey: import.meta.env.STRAVA_INTEGRATION_API_KEY,
+    buttonImage: "/images/partners/strava/btn_strava_connect_with_white.svg",
   },
   // {
   //   id: "garmin",
@@ -18,12 +20,12 @@ export const devices: Device[] = [
   //   baseUrl: "https://garmin-integration.jainparichay.online",
   //   apiKey: "1234567890",
   // },
-  {
-    id: "whoop",
-    name: "Whoop",
-    baseUrl: "https://whoop-integration.jainparichay.online",
-    apiKey: "1234567890",
-  },
+  // {
+  //   id: "whoop",
+  //   name: "Whoop",
+  //   baseUrl: "https://whoop-integration.jainparichay.online",
+  //   apiKey: "1234567890",
+  // },
 ];
 
 // Helper function to check device connection status

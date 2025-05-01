@@ -25,14 +25,14 @@ export default async function Devices({ userId }: { userId: string }) {
             {data.connected ? (
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                    {data.userData?.profile && (
-                      <Avatar>
-                        <AvatarImage src={data.userData.profile} />
-                        <AvatarFallback>
-                          {data.userData.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                  {data.userData?.profile && (
+                    <Avatar>
+                      <AvatarImage src={data.userData.profile} />
+                      <AvatarFallback>
+                        {data.userData.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                   <div>
                     <h3 className="font-medium">{data.userData?.name}</h3>
                     <p className="text-sm text-gray-500">

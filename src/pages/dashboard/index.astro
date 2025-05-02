@@ -9,7 +9,8 @@ interface DashboardFeatureFlag {
   timestamp: string;
 }
 
-const userId = Astro.locals.user.id;
+const userId = Astro.locals.user.phoneNumber;
+
 const featureFlag = await getRedisCache(`feature_flag:dashboard`);
 let dashboardFeatureFlag: DashboardFeatureFlag | null = JSON.parse(featureFlag || '{}');
 if (!dashboardFeatureFlag || !featureFlag) {

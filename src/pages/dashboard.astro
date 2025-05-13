@@ -17,6 +17,9 @@ if (!user) {
   return Astro.redirect('/auth');
 }
 
+if (!user.name) {
+  return Astro.redirect("/user/onboarding");
+}
 ---
 
 <Layout title="Airia - Dashboard">

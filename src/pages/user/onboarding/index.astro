@@ -1,0 +1,176 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const auth_token = Astro.cookies.get('auth_token');
+const user = Astro.cookies.get('user');
+if (user) {
+  const userData = JSON.parse(user.value);
+  if (userData.name) {
+    return Astro.redirect('/dashboard');
+  }
+}
+---
+
+<Layout title="Onboarding - Airia">
+  <main class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
+      <div class="text-center">
+        <h1 class="text-3xl font-extrabold text-gray-900">Welcome to Airia</h1>
+        <p class="mt-2 text-sm text-gray-600">
+          Let's personalize your experience
+        </p>
+      </div>
+      
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <form id="onboardingForm" class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">
+              What's your name?
+            </label>
+            <div class="mt-1">
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter your name"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">
+              Have you run before?
+            </label>
+            <p class="text-sm text-gray-500 mb-4">
+              Select your running experience level
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <input
+                  id="level-novice"
+                  name="runningLevel"
+                  type="radio"
+                  value="novice"
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                />
+                <label for="level-novice" class="ml-3 block text-sm font-medium text-gray-700">
+                  <span class="font-medium">Novice</span>
+                  <span class="text-gray-500 block">Never ran before</span>
+                </label>
+              </div>
+              
+              <div class="flex items-center">
+                <input
+                  id="level-beginner"
+                  name="runningLevel"
+                  type="radio"
+                  value="beginner"
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                />
+                <label for="level-beginner" class="ml-3 block text-sm font-medium text-gray-700">
+                  <span class="font-medium">Beginner</span>
+                  <span class="text-gray-500 block">Run occasionally but not professionally</span>
+                </label>
+              </div>
+              
+              <div class="flex items-center">
+                <input
+                  id="level-intermediate"
+                  name="runningLevel"
+                  type="radio"
+                  value="intermediate"
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                />
+                <label for="level-intermediate" class="ml-3 block text-sm font-medium text-gray-700">
+                  <span class="font-medium">Intermediate</span>
+                  <span class="text-gray-500 block">Regular runner but haven't done marathons</span>
+                </label>
+              </div>
+              
+              <div class="flex items-center">
+                <input
+                  id="level-professional"
+                  name="runningLevel"
+                  type="radio"
+                  value="professional"
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                />
+                <label for="level-professional" class="ml-3 block text-sm font-medium text-gray-700">
+                  <span class="font-medium">Professional</span>
+                  <span class="text-gray-500 block">Experienced runner, completed marathons</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  document.getElementById('onboardingForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    const name = formData.get('name') as string;
+    const runningLevel = formData.get('runningLevel') as string;
+    
+    if (!name || !runningLevel) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    try {
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitButton.disabled = true;
+      submitButton.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Saving...
+      `;
+      
+      const response = await fetch('/api/user/onboarding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          runningLevel,
+        }),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to save onboarding data');
+      }
+      
+      // Redirect to dashboard on success
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Onboarding error:', error);
+      alert(error instanceof Error ? error.message : 'An error occurred. Please try again.');
+      
+      // Reset button state
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitButton.disabled = false;
+      submitButton.textContent = 'Continue';
+    }
+  });
+</script>

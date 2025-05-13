@@ -26,10 +26,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 };
 
 export const DELETE: APIRoute = async ({ cookies }) => {
-  console.log(cookies.get("auth_token"));
-  cookies.delete("auth_token");
   cookies.delete("user");
-  console.log(cookies.get("auth_token"));
+  cookies.delete("auth_token");
+  cookies.delete("refresh_token");
 
   const headers = new Headers();
   headers.append(

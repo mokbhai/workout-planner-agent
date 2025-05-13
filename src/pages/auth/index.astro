@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Login from "../../components/Login";
-import SignUp from "../../components/SignUp";
+import Auth from "../../components/Auth";
 ---
 
 <Layout title="Airia - Sign In or Sign Up">
@@ -13,88 +12,11 @@ import SignUp from "../../components/SignUp";
           Your personal AI workout coach
         </p>
       </div>
-      
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="flex border-b">
-          <button 
-            id="login-tab" 
-            class="flex-1 py-4 text-center font-medium text-sm focus:outline-none border-b-2 border-indigo-500 text-indigo-600"
-            aria-current="page"
-          >
-            Log In
-          </button>
-          <button 
-            id="signup-tab" 
-            class="flex-1 py-4 text-center font-medium text-sm focus:outline-none text-gray-500 hover:text-gray-700"
-          >
-            Sign Up
-          </button>
-        </div>
         
         <div id="login-content" class="p-6">
-          <Login client:load />
-        </div>
-        
-        <div id="signup-content" class="p-6 hidden">
-          <SignUp client:load />
+          <Auth client:load />
         </div>
       </div>
     </div>
   </main>
 </Layout>
-
-<script>
-  // Get the tab from URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const tab = urlParams.get('tab');
-  
-  // Function to switch tabs
-  function switchTab(activeTab: string) {
-    const loginTab = document.getElementById('login-tab');
-    const signupTab = document.getElementById('signup-tab');
-    const loginContent = document.getElementById('login-content');
-    const signupContent = document.getElementById('signup-content');
-    
-    if (activeTab === 'login') {
-      loginTab?.classList.add('border-indigo-500', 'text-indigo-600');
-      loginTab?.classList.remove('text-gray-500');
-      signupTab?.classList.remove('border-indigo-500', 'text-indigo-600');
-      signupTab?.classList.add('text-gray-500');
-      
-      loginContent?.classList.remove('hidden');
-      signupContent?.classList.add('hidden');
-    } else {
-      signupTab?.classList.add('border-indigo-500', 'text-indigo-600');
-      signupTab?.classList.remove('text-gray-500');
-      loginTab?.classList.remove('border-indigo-500', 'text-indigo-600');
-      loginTab?.classList.add('text-gray-500');
-      
-      signupContent?.classList.remove('hidden');
-      loginContent?.classList.add('hidden');
-    }
-  }
-  
-  // Set initial tab based on URL parameter
-  if (tab === 'signup') {
-    switchTab('signup');
-  } else {
-    switchTab('login');
-  }
-  
-  // Add event listeners to tabs
-  document.getElementById('login-tab')?.addEventListener('click', () => {
-    switchTab('login');
-    // Update URL without reloading the page
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('tab', 'login');
-    window.history.pushState({}, '', newUrl);
-  });
-  
-  document.getElementById('signup-tab')?.addEventListener('click', () => {
-    switchTab('signup');
-    // Update URL without reloading the page
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('tab', 'signup');
-    window.history.pushState({}, '', newUrl);
-  });
-</script> 

@@ -23,6 +23,7 @@ model User {
   lastLoginAt   DateTime?
   isVerified    Boolean   @default(false)
   authAttempts  AuthAttempt[]
+  deviceConnections DeviceConnection[]
 }
 
 model AuthAttempt {
@@ -36,3 +37,34 @@ model AuthAttempt {
   userAgent   String?
   metadata    Json?     // Additional information about the attempt
 }
+
+model DeviceConnection {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  deviceType    String    // e.g., "strava", "garmin", "apple-watch", "fitbit"
+  accessToken   String?
+  refreshToken  String?
+  expiresAt     DateTime?
+  isConnected   Boolean   @default(false)
+  lastSyncAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  // deviceData    DeviceData[]
+
+  @@unique([userId, deviceType])
+}
+
+// model DeviceData {
+//   id                String    @id @default(cuid())
+//   connectionId      String
+//   connection        DeviceConnection @relation(fields: [connectionId], references: [id])
+//   dataType          String    // e.g., "activity", "heart_rate", "sleep"
+//   rawData          Json      // Raw data from the device
+//   processedData    Json?     // Processed/transformed data
+//   timestamp        DateTime  // When the data was recorded
+//   createdAt        DateTime  @default(now())
+//   updatedAt        DateTime  @updatedAt
+
+//   @@index([connectionId, dataType, timestamp])
+// }

@@ -23,7 +23,6 @@ export default async function Devices({ userId }: { userId: string }) {
     });
     await setRedisCache(`feature_flag:device_integrations`, integrations);
   }
-
   const parsedIntegrations: DeviceIntegration = JSON.parse(integrations);
   if (!parsedIntegrations.enabled) {
     return null;

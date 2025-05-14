@@ -44,7 +44,7 @@ export const getConnectionStatus = async (
         "x-api-key": device.apiKey,
       },
     });
-
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

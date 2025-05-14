@@ -1,0 +1,10 @@
+---
+import { Onboarding as OnboardingComponent } from '@/components/onboarding/Onboarding';
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Onboarding - Workout Planner">
+  <body class="min-h-screen bg-gray-50">
+    <OnboardingComponent client:load />
+  </body>
+</Layout>
